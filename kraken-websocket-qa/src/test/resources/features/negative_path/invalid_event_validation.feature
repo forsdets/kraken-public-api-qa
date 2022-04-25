@@ -17,7 +17,7 @@ Feature: Validate the Kraken WebSocket API by providing invalid event in public 
     Examples:
       | feed_name | error_message     |
       | book      | Unsupported event |
-#      | ohlc      | Unsupported event |
-#      | spread    | Unsupported event |
-#      | ticker    | Unsupported event |
-#      | trade     | Unsupported event |
+      | ohlc      | Unsupported event |
+      | spread    | Unsupported event |
+      | ticker    | Unsupported event |
+      | trade     | Unsupported event |
