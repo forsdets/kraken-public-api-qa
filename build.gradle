@@ -40,7 +40,6 @@ subprojects {
         classpath = sourceSets.test.runtimeClasspath
         main = 'org.junit.runner.JUnitCore'
 //        args = ['classpath:com.kraken.publicapi.tests.RunCuke']
-        logging.captureStandardOutput LogLevel.INFO
 
     }
 }

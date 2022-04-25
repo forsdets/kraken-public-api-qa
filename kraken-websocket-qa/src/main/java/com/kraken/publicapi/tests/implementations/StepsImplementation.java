@@ -12,6 +12,8 @@ import com.kraken.publicapi.tests.testutility.SchemaValidationUtil;
 import io.cucumber.datatable.DataTable;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -26,6 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class StepsImplementation {
+    Logger logger = LoggerFactory.getLogger(StepsImplementation.class);
 
     public void openWebSocket() throws IOException {
         SocketDataContext context = new SocketDataContext(getPropertyValue(TestConstants.WEB_SOCKET_PROPERTY_FILE_PATH, TestConstants.WEB_SOCKET_API_URI), 60);
@@ -38,6 +41,7 @@ public class StepsImplementation {
         assertThat("The Socket status is offline", socketStatusBeans.getStatus().equals("online"));
         socketConnection.getKrakenWebSocketClient().socketDataContext.setStatus(socketStatusBeans.getStatus());
         TestContext.setContext("success_client_connection", socketConnection);
+        logger.info(String.format("Client Connection Details --- %s", socketConnection));
     }
 
     public void createSubscriptionRequest(DataTable dataTable) throws JsonProcessingException {
@@ -70,6 +74,7 @@ public class StepsImplementation {
             requestJSONObject.put("depth", Integer.parseInt(depth));
         }
         TestContext.setContext("Subscription_Request", requestJSONObject.toString());
+        logger.info(String.format("Subscription Request --- %s", requestJSONObject));
     }
 
     public void submitRequest() throws InterruptedException {
@@ -105,7 +110,7 @@ public class StepsImplementation {
                 .collect(Collectors.toList());
 
         Assert.assertTrue("Verify that at least one message received in every second", subscribedMessageList.size() >= delayTime);
-
+        logger.info(String.format("Subscribed message size --- %s", subscribedMessageList.size()));
     }
 
     public void validateSuccessfulSubscription(DataTable table) throws JsonProcessingException {
@@ -123,15 +128,22 @@ public class StepsImplementation {
                 .collect(Collectors.toList());
 
         assertThat("No. of Subscription status is not equal to 1", subscriptionStatusList.size() == 1);
-
+        logger.info(String.format("Subscribed event size from feed --- %s", subscriptionStatusList.size()));
         ObjectMapper objectMapper = new ObjectMapper();
         EventChannelSubscriptionBeans eventChannelSubscriptionBeans = objectMapper.readValue(subscriptionStatusList.get(0).getReceivedMessage(), EventChannelSubscriptionBeans.class);
 
         assertThat("Channel name is not contained with feed name", eventChannelSubscriptionBeans.getChannelName().contains(feedName));
+        logger.info(String.format("Channel name from event subscription feed --- %s", eventChannelSubscriptionBeans.getChannelName()));
+        logger.info(String.format("Channel name from user input --- %s", feedName));
         assertThat("Currency pair is not matched", eventChannelSubscriptionBeans.getPair().equals(currencyPair));
+        logger.info(String.format("Subscribed event's currency from feed --- %s", eventChannelSubscriptionBeans.getPair()));
+        logger.info(String.format("Current from user input --- %s", currencyPair));
         assertThat("Status is not matched", eventChannelSubscriptionBeans.getStatus().equals("subscribed"));
+        logger.info(String.format("Event Subscription status from feed--- %s", eventChannelSubscriptionBeans.getStatus()));
+        logger.info(String.format("Event Subscription status from user input--- %s", "subscribed"));
         assertThat("Feed name is not matched", eventChannelSubscriptionBeans.getSubscription().getName().equals(feedName));
-
+        logger.info(String.format("Feed name from event subscription feed --- %s", eventChannelSubscriptionBeans.getSubscription().getName()));
+        logger.info(String.format("Feed name from user input --- %s", feedName));
         TestContext.setContext("channel_number", eventChannelSubscriptionBeans.getChannelID());
     }
 
@@ -152,14 +164,26 @@ public class StepsImplementation {
                 .collect(Collectors.toList());
 
         Assert.assertEquals("Verify the number of subscriptionStatus messages", 2, subscriptionStatusList.size());
+        logger.info(String.format("Subscribed event size from feed --- %s", subscriptionStatusList.size()));
 
         ObjectMapper objectMapper = new ObjectMapper();
         EventChannelSubscriptionBeans eventChannelSubscriptionBeans = objectMapper.readValue(subscriptionStatusList.get(1).getReceivedMessage(), EventChannelSubscriptionBeans.class);
 
         Assert.assertTrue("Verify that channel name contains feed name", eventChannelSubscriptionBeans.getChannelName().contains(feedName));
+        logger.info(String.format("Channel name from from feed --- %s", eventChannelSubscriptionBeans.getChannelName()));
+        logger.info(String.format("Channel name from user input --- %s", feedName));
+
         Assert.assertEquals("Verify the currency pairs", currencyPair, eventChannelSubscriptionBeans.getPair());
+        logger.info(String.format("Currency pair from feed --- %s", eventChannelSubscriptionBeans.getPair()));
+        logger.info(String.format("Currency pair from user input --- %s", currencyPair));
+
         Assert.assertEquals("Verify the status", "unsubscribed", eventChannelSubscriptionBeans.getStatus());
+        logger.info(String.format("Event name from feed --- %s", eventChannelSubscriptionBeans.getStatus()));
+        logger.info(String.format("Event name from user input --- %s", "unsubscribed"));
+
         Assert.assertEquals("Verify the name", feedName, eventChannelSubscriptionBeans.getSubscription().getName());
+        logger.info(String.format("Feed name from feed --- %s", subscriptionStatusList.size()));
+        logger.info(String.format("Feed name from user input --- %s", subscriptionStatusList.size()));
     }
 
     public void validateFeed(int delayTime) throws InterruptedException {
@@ -176,7 +200,6 @@ public class StepsImplementation {
                         c.getReceivedDateTime().isAfter(startTime) &&
                         c.getReceivedDateTime().isBefore(endTime))
                 .collect(Collectors.toList());
-
         Assert.assertEquals("Verify that no subscribed message is received after the unsubscribe", 0, subscribedMessageList.size());
 
         subscribedMessageList = socketConnection.getKrakenWebSocketClient().socketDataContext.getMessageList()
@@ -186,6 +209,7 @@ public class StepsImplementation {
                 .collect(Collectors.toList());
 
         Assert.assertTrue("Verify that at least one message received in every second", subscribedMessageList.size() >= delayTime);
+        logger.info(String.format("Subscription List size---%s", subscribedMessageList.size()));
     }
 
     public void validateSchema(String schema) {
@@ -205,7 +229,6 @@ public class StepsImplementation {
         } else if (schema.toLowerCase(Locale.ROOT).equalsIgnoreCase("spread")) {
             actualSchemaFilePath = "schema_files/spread_schema.json";
         }
-
         SchemaValidationUtil.checkSchema(socketConnection, actualSchemaFilePath);
     }
 
@@ -228,11 +251,21 @@ public class StepsImplementation {
 
         ObjectMapper objectMapper = new ObjectMapper();
         StatusMessageBeans statusMessageBeans = objectMapper.readValue(subscriptionStatusList.get(0).getReceivedMessage(), StatusMessageBeans.class);
+        logger.info(String.format("Currency pair from feed ---%s", statusMessageBeans));
 
         assertThat("Currency pair is not matched", statusMessageBeans.getPair().equalsIgnoreCase(currencyPair));
+        logger.info(String.format("Currency pair from feed ---%s", statusMessageBeans.getPair()));
+        logger.info(String.format("Currency pair from user input ---%s", currencyPair));
         assertThat("Error is not available in the message", statusMessageBeans.getStatus().equals("error"));
+        logger.info(String.format("Status message from feed ---%s", statusMessageBeans.getStatus()));
+        logger.info(String.format("Status message from user input ---%s", "error"));
         assertThat("Feed name is not matched", statusMessageBeans.getSubscription().getName().equals(feedName));
+        logger.info(String.format("Feed name from feed ---%s", statusMessageBeans.getSubscription().getName()));
+        logger.info(String.format("Feed name from user input ---%s", feedName));
         assertThat("Feed name is not matched", statusMessageBeans.getErrorMessage().equals(errorMessage));
+        logger.info(String.format("Error message from feed ---%s", statusMessageBeans.getErrorMessage()));
+        logger.info(String.format("Error message from user input ---%s", errorMessage));
+
     }
 
     public void validateFailedSubscription(int delayTime) throws InterruptedException {

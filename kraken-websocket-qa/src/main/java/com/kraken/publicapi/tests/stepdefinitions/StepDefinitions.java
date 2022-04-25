@@ -1,12 +1,10 @@
 package com.kraken.publicapi.tests.stepdefinitions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kraken.publicapi.client.websocketapp.KrakenWebSocketClient;
 import com.kraken.publicapi.client.websocketapp.SocketConnection;
 import com.kraken.publicapi.tests.contexts.TestContext;
 import com.kraken.publicapi.tests.implementations.StepsImplementation;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
