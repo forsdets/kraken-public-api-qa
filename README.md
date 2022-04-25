@@ -8,13 +8,10 @@ This project has been built by using gradle build, and this contains 2 internal 
 1. kraken-websocket-client
 2. kraken-websocket-qa
 
-#### kraken-websocket-client 
-
+#### kraken-websocket-client
 - This module is having the Java WebSocket client which is making connection to the Kraken public
 APIs. This Client module is compiled and this will act as a client app to the QA module.
-- 
-#### kraken-websocket-qa 
-
+#### kraken-websocket-qa
 - This module is having the cucumber scenarios in BDD format for Kraken public data feed which will use the client module for
 connection and data processed by it. 
 The cucumber scenarios are divided into 2 parts, 1. Happy_Path, 2. Negative_Path
