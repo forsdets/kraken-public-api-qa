@@ -1,0 +1,5 @@
+rootProject.name = 'kraken-public-api-qa'
+
+include 'kraken-websocket-client'
+include 'kraken-websocket-qa'
+
