@@ -2,9 +2,6 @@ plugins {
     id 'java'
 }
 
-group 'kraken-trading-api-qa'
-version '0.0.1-SNAPSHOT'
-
 repositories {
     mavenCentral()
 }
@@ -12,9 +9,4 @@ repositories {
 dependencies {
     implementation project(":kraken-websocket-client")
 
-}
-
-
-test {
-    useJUnitPlatform()
 }

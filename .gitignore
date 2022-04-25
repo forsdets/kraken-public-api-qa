@@ -6,7 +6,7 @@
 *.iml
 /.idea
 /venv
-/target
+*/target/
 /log
 /.gradle
 /build

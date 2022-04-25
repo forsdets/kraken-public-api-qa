@@ -41,12 +41,12 @@ public class StepsImplementation {
     }
 
     public void createSubscriptionRequest(DataTable dataTable) throws JsonProcessingException {
-        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
-        Map<String, String> row = rows.get(0);
+        List<Map<String, String>> tableRows = dataTable.asMaps(String.class, String.class);
+        Map<String, String> inputData = tableRows.get(0);
 
-        String event = row.get("event").trim();
-        String currencyPair = row.get("currency_pair").trim();
-        String feedName = row.get("feed_name").trim();
+        String event = inputData.get("event").trim();
+        String currencyPair = inputData.get("currency_pair").trim();
+        String feedName = inputData.get("feed_name").trim();
 
         SubscriptionBeans subscriptionBeans = new SubscriptionBeans();
         subscriptionBeans.setName(feedName);
@@ -60,9 +60,15 @@ public class StepsImplementation {
         requestBeans.setSubscription(subscriptionBeans);
 
         ObjectMapper mapper = new ObjectMapper();
-        String jsonString = mapper.writeValueAsString(requestBeans);
+        JSONObject requestJSONObject = new JSONObject(mapper.writeValueAsString(requestBeans));
 
-        JSONObject requestJSONObject = new JSONObject(jsonString);
+        if (inputData.get("interval") != null) {
+            String interval = inputData.get("interval").trim();
+            requestJSONObject.put("interval", Integer.parseInt(interval));
+        } else if (inputData.get("depth") != null) {
+            String depth = inputData.get("depth").trim();
+            requestJSONObject.put("depth", Integer.parseInt(depth));
+        }
         TestContext.setContext("Subscription_Request", requestJSONObject.toString());
     }
 

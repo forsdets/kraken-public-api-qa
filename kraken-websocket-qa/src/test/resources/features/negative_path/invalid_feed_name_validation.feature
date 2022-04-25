@@ -1,4 +1,4 @@
-@Regression
+@Regression @Invalid_Feed_Name @Negative_Path
 Feature: Validate the Kraken WebSocket API by providing invalid feed name in public data feed
 
   @Invalid_Feed_Name_Validation

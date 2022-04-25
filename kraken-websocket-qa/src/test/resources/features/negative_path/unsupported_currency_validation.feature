@@ -1,4 +1,4 @@
-@Regression
+@Regression @Invalid_Currency @Negative_Path
 Feature: Validate the Kraken WebSocket API by providing invalid currency pair in public data feed
 
   @Unsupported_Currency_Validation_1
