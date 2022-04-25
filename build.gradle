@@ -39,7 +39,7 @@ subprojects {
     task cucumber(type: JavaExec) {
         classpath = sourceSets.test.runtimeClasspath
         main = 'org.junit.runner.JUnitCore'
-//        args = ['classpath:com.kraken.publicapi.tests.RunCuke']
+        args = ['classpath:com.kraken.publicapi.tests.RunCuke']
 
     }
 }
