@@ -8,9 +8,14 @@ This project has been built by using gradle build, and this contains 2 internal 
 1. kraken-websocket-client
 2. kraken-websocket-qa
 
-The module kraken-websocket-client is having the Java WebSocket client which is making connection to the Kraken public
-APIs. This Client module is compiled and this will act as a client app to the QA module. 
-The module kraken-websocket-qa is having the cucumber scenarios in BDD format for Kraken public data feed which will use the client module for
+#### kraken-websocket-client 
+
+- This module is having the Java WebSocket client which is making connection to the Kraken public
+APIs. This Client module is compiled and this will act as a client app to the QA module.
+- 
+#### kraken-websocket-qa 
+
+- This module is having the cucumber scenarios in BDD format for Kraken public data feed which will use the client module for
 connection and data processed by it. 
 The cucumber scenarios are divided into 2 parts, 1. Happy_Path, 2. Negative_Path
 
@@ -52,7 +57,7 @@ We can run this Regression suite with the following ways.
 gradle clean test
 ```
 
-#### Jenkins
+#### Jenkins Build
 
 This can be plugged in any standalone Jenkins job or pipelines. This project has been successfully built and tests has
 been executed. Intermittently some of happy path is failing but those are passed when executed separately.
