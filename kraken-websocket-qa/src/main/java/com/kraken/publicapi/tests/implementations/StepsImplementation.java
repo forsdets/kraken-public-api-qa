@@ -2,25 +2,23 @@ package com.kraken.publicapi.tests.implementations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kraken.publicapi.client.websocketapp.KrakenWebSocketClient;
 import com.kraken.publicapi.client.websocketapp.SocketConnection;
 import com.kraken.publicapi.client.websocketbeans.*;
 import com.kraken.publicapi.client.websocketcontexts.MessageContext;
 import com.kraken.publicapi.client.websocketcontexts.SocketDataContext;
 import com.kraken.publicapi.tests.constants.TestConstants;
 import com.kraken.publicapi.tests.contexts.TestContext;
+import com.kraken.publicapi.tests.testutility.SchemaValidationUtil;
 import io.cucumber.datatable.DataTable;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.kraken.publicapi.tests.testutility.FileHandlingUtil.getPropertyValue;
@@ -28,8 +26,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class StepsImplementation {
-
-    Logger logger = LoggerFactory.getLogger(KrakenWebSocketClient.class);
 
     public void openWebSocket() throws IOException {
         SocketDataContext context = new SocketDataContext(getPropertyValue(TestConstants.WEB_SOCKET_PROPERTY_FILE_PATH, TestConstants.WEB_SOCKET_API_URI), 60);
@@ -106,32 +102,6 @@ public class StepsImplementation {
 
     }
 
-    public void validateUnSubscriptions(DataTable table) throws JsonProcessingException {
-        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
-        Map<String, String> row = rows.get(0);
-
-        String currencyPair = row.get("currency_pair").trim();
-        String feedName = row.get("feed_name").trim();
-        String error = row.get("error").trim();
-
-        SocketConnection socketConnection = (SocketConnection) TestContext.getContext("success_client_connection");
-
-        List<MessageContext> subscriptionStatusList = socketConnection.getKrakenWebSocketClient().socketDataContext.getMessageList()
-                .stream()
-                .filter(c -> c.getReceivedMessage().contains("subscriptionStatus"))
-                .collect(Collectors.toList());
-
-        assertThat("No Messages subscribed", subscriptionStatusList.size() == 1);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        StatusMessageBeans statusMessageBeans = objectMapper.readValue(subscriptionStatusList.get(0).getReceivedMessage(), StatusMessageBeans.class);
-
-        assertThat("Currency pairs are not equal", statusMessageBeans.getPair().equals(currencyPair));
-        assertThat("Subscribed status is not matched", statusMessageBeans.getStatus().equals("error"));
-        assertThat("Subscribed name is not matched", statusMessageBeans.getSubscription().getName().equals(feedName));
-        assertThat("Error message is not matched", statusMessageBeans.getErrorMessage().equals(error));
-    }
-
     public void validateSuccessfulSubscription(DataTable table) throws JsonProcessingException {
         List<Map<String, String>> rows = table.asMaps(String.class, String.class);
         Map<String, String> row = rows.get(0);
@@ -146,7 +116,7 @@ public class StepsImplementation {
                 .filter(c -> c.getReceivedMessage().contains("subscriptionStatus"))
                 .collect(Collectors.toList());
 
-        assertThat("No. of Subscription status is not equal to 1",subscriptionStatusList.size()==1);
+        assertThat("No. of Subscription status is not equal to 1", subscriptionStatusList.size() == 1);
 
         ObjectMapper objectMapper = new ObjectMapper();
         EventChannelSubscriptionBeans eventChannelSubscriptionBeans = objectMapper.readValue(subscriptionStatusList.get(0).getReceivedMessage(), EventChannelSubscriptionBeans.class);
@@ -215,32 +185,63 @@ public class StepsImplementation {
     public void validateSchema(String schema) {
 
         SocketConnection socketConnection = (SocketConnection) TestContext.getContext("success_client_connection");
-        String schemaResourceName = null;
+        String actualSchemaFilePath = null;
         if (schema.toLowerCase(Locale.ROOT).equalsIgnoreCase("subscriptionStatus")) {
-            schemaResourceName = "schema_files/subscriptionstatus_schema.json";
+            actualSchemaFilePath = "schema_files/subscriptionstatus_schema.json";
         } else if (schema.toLowerCase(Locale.ROOT).equalsIgnoreCase("ohlc")) {
-            schemaResourceName = "schema_files/ohlc_schema.json";
+            actualSchemaFilePath = "schema_files/ohlc_schema.json";
         } else if (schema.toLowerCase(Locale.ROOT).equalsIgnoreCase("trade")) {
-            schemaResourceName = "schema_files/trade_schema.json";
+            actualSchemaFilePath = "schema_files/trade_schema.json";
         } else if (schema.toLowerCase(Locale.ROOT).equalsIgnoreCase("book")) {
-            schemaResourceName = "schema_files/book_schema.json";
+            actualSchemaFilePath = "schema_files/book_schema.json";
         } else if (schema.toLowerCase(Locale.ROOT).equalsIgnoreCase("ticker")) {
-            schemaResourceName = "schema_files/ticker_schema.json";
+            actualSchemaFilePath = "schema_files/ticker_schema.json";
         } else if (schema.toLowerCase(Locale.ROOT).equalsIgnoreCase("spread")) {
-            schemaResourceName = "schema_files/spread_schema.json";
+            actualSchemaFilePath = "schema_files/spread_schema.json";
         }
 
-        String actualMessage = socketConnection.getKrakenWebSocketClient().socketDataContext.getMessage(1).getReceivedMessage();
+        SchemaValidationUtil.checkSchema(socketConnection, actualSchemaFilePath);
+    }
 
-        JSONObject jsonSchema = new JSONObject(
-                new JSONTokener(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(schemaResourceName))));
+    public void validateErrorMessages(DataTable table) throws JsonProcessingException {
+        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
+        Map<String, String> row = rows.get(0);
 
-        JSONObject jsonSubject = new JSONObject(actualMessage);
+        String currencyPair = row.get("currency_pair").trim();
+        String feedName = row.get("feed_name").trim();
+        String errorMessage = row.get("error_message").trim();
 
-        Schema expectedSchema = SchemaLoader.load(jsonSchema);
-        expectedSchema.validate(jsonSubject);
-        System.out.printf("Schema of %s is successfully tested.%n", schema);
+        SocketConnection socketConnection = (SocketConnection) TestContext.getContext("success_client_connection");
 
+        List<MessageContext> subscriptionStatusList = socketConnection.getKrakenWebSocketClient().socketDataContext.getMessageList()
+                .stream()
+                .filter(c -> c.getReceivedMessage().contains("subscriptionStatus"))
+                .collect(Collectors.toList());
+
+        assertThat("No. of Subscription status is not equal to 1", subscriptionStatusList.size() == 1);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        StatusMessageBeans statusMessageBeans = objectMapper.readValue(subscriptionStatusList.get(0).getReceivedMessage(), StatusMessageBeans.class);
+
+        assertThat("Currency pair is not matched", statusMessageBeans.getPair().equalsIgnoreCase(currencyPair));
+        assertThat("Error is not available in the message", statusMessageBeans.getStatus().equals("error"));
+        assertThat("Feed name is not matched", statusMessageBeans.getSubscription().getName().equals(feedName));
+        assertThat("Feed name is not matched", statusMessageBeans.getErrorMessage().equals(errorMessage));
+    }
+
+    public void validateFailedSubscription(int delayTime) throws InterruptedException {
+        SocketConnection socketConnection = (SocketConnection) TestContext.getContext("success_client_connection");
+
+        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime endTime = startTime.plusSeconds(delayTime + 2);
+        Thread.sleep(delayTime * 1000L);
+
+        List<MessageContext> subscribedMessageList = socketConnection.getKrakenWebSocketClient().socketDataContext.getMessageList()
+                .stream()
+                .filter(c -> c.getReceivedDateTime().isAfter(startTime) &&
+                        c.getReceivedDateTime().isBefore(endTime))
+                .collect(Collectors.toList());
+        Assert.assertEquals("Verify that no subscribed message is received when subscription unsuccessful", 0, subscribedMessageList.size());
     }
 }
 

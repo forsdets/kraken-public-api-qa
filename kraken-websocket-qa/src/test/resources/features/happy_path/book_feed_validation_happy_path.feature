@@ -12,8 +12,8 @@ Feature: Validate the Kraken WebSocket API by subscribing the Book order public-
       | event     | currency_pair   | feed_name |
       | subscribe | <currency_pair> | book      |
     And user verifies that the feed is received the subscription message
-    Then user performs the schema validation on "subscriptionStatus"
-    Then user performs the schema validation on "book"
+    Then user performs the schema validation for "subscriptionStatus"
+    Then user performs the schema validation for "book"
     When user creates an un-subscription request for kraken public data feed
       | event       | currency_pair   | feed_name |
       | unsubscribe | <currency_pair> | book      |

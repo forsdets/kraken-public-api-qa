@@ -17,7 +17,7 @@ public class StepDefinitions {
 
     StepsImplementation stepsImplementation = new StepsImplementation();
 
-    @Before(order = 1)
+    @Before
     public void inIt() {
         TestContext inItStatus = new TestContext();
     }
@@ -63,11 +63,21 @@ public class StepDefinitions {
         stepsImplementation.submitRequest();
     }
 
-
     @And("user verifies that the feed is not received the un-subscription message")
     public void verifyUnSubscription() throws InterruptedException {
         int delayTime = 30;
         stepsImplementation.validateFeed(delayTime);
+    }
+
+    @And("^user verifies that the subscription is not successful$")
+    public void checkError(DataTable table) throws JsonProcessingException {
+        stepsImplementation.validateErrorMessages(table);
+    }
+
+    @And("^user verifies subscription message is not received$")
+    public void checkUnSuccessfulMessage() throws InterruptedException {
+        int delayTime = 10;
+        stepsImplementation.validateFailedSubscription(delayTime);
     }
 
     @And("^user closes the connection$")
@@ -76,7 +86,7 @@ public class StepDefinitions {
         socketConnection.closeConnection();
     }
 
-    @Then("user performs the schema validation on {string}")
+    @Then("user performs the schema validation for {string}")
     public void performSchemaValidation(String schema) {
         stepsImplementation.validateSchema(schema);
     }

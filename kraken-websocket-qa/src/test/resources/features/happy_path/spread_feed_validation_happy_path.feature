@@ -12,8 +12,8 @@ Feature: Validate the Kraken WebSocket API by subscribing the spread public-data
       | event     | currency_pair   | feed_name |
       | subscribe | <currency_pair> | spread    |
     And user verifies that the feed is received the subscription message
-    Then user performs the schema validation on "subscriptionStatus"
-    Then user performs the schema validation on "spread"
+    Then user performs the schema validation for "subscriptionStatus"
+    Then user performs the schema validation for "spread"
     When user creates an un-subscription request for kraken public data feed
       | event       | currency_pair   | feed_name |
       | unsubscribe | <currency_pair> | spread    |
