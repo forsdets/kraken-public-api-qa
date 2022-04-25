@@ -1,25 +1,32 @@
 package com.kraken.publicapi.tests.stepdefinitions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.kraken.publicapi.client.websocketapp.KrakenWebSocketClient;
 import com.kraken.publicapi.client.websocketapp.SocketConnection;
 import com.kraken.publicapi.tests.contexts.TestContext;
 import com.kraken.publicapi.tests.implementations.StepsImplementation;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class StepDefinitions {
 
+    Logger logger = LoggerFactory.getLogger(StepDefinitions.class);
     StepsImplementation stepsImplementation = new StepsImplementation();
 
     @Before
-    public void inIt() {
+    public void inIt(Scenario scenario) {
         TestContext inItStatus = new TestContext();
+        logger.info(scenario.getName());
     }
 
     @Given("^user connects to the WebSocket API$")

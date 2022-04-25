@@ -41,26 +41,22 @@ We can run this Regression suite with the following ways.
 1. Via RunCuke file -> which is available in the qa module(src/test/java/RunCuke), by providing the @Regression tag
 2. Via gradle task -> from the IDE Terminal or from gitBash provide the below command and run the whole suite, 
 we can change the tag in the gradle file for Cucumber task so that will run the specified scenarios
-
-#### Jenkins
-I have configured a small standalone Jenkins job and made it work.
-
-
 ```
 gradle clean test
 ```
-Test Report
------------
-Cucumber Report will be generated and will be available in target folder. Relative report path is given below.
+#### Jenkins
+This can be plugged in any standalone Jenkins job or pipelines.
+This project has been successfully built and tests has been executed.
+Intermittently some of happy path is failing but those are passed when executed separately.
+
+Regression Test Results
+-----------------------
+Regression Cucumber Report will be generated and will be available in target folder.
+The local results can be found in the below foler
 ```
-/target/cucumber-html-reports/overview-features.html
+kraken-websocket-qa/target/
 ```
-Logs
------------
-Simple logs will be generated and will be available in target folder. Relative log path is given below.
-```
-/target/_log/Logging.txt
-```
+
 Dockerfile
 -----------
 Docker file is available in the parent folder with ENTRYPOINT as mvn test verify. Once the execution is completed check the target folder on your local for logs and reports. Below is the sample command to create and run docker images. Please execute the below command from Windows PowerShell or find the equivalent command for the current folder in the respective OS.
