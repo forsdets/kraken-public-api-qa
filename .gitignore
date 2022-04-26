@@ -1,0 +1,22 @@
+*.class
+
+# Package Files #
+*.war
+*.ear
+*.iml
+/.idea
+/venv
+/target/
+/log
+/.gradle
+/build
+/usage
+/build/
+/.idea/
+/.gradle/
+/classes/
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
