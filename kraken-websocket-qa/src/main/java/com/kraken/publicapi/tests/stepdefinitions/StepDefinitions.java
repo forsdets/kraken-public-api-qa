@@ -59,7 +59,7 @@ public class StepDefinitions {
 
     @And("user verifies that the feed is received the subscription message")
     public void checkSubscription() throws InterruptedException {
-        int delayTime = 30;
+        int delayTime = 40;
         stepsImplementation.validateSubscription(delayTime);
     }
 
@@ -70,7 +70,7 @@ public class StepDefinitions {
 
     @And("user verifies that the feed is not received the un-subscription message")
     public void verifyUnSubscription() throws InterruptedException {
-        int delayTime = 30;
+        int delayTime = 40;
         stepsImplementation.validateFeed(delayTime);
     }
 
