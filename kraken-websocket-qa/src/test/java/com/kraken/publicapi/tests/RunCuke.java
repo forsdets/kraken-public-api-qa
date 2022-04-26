@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
                 "json:target/cucumber.json",
                 "junit:target/cucumber.xml"},
         glue = {"com.kraken.publicapi.tests.stepdefinitions"},
-        tags = "@Invalid_Feed_Name_Validation"
+        tags = "@Regression"
 )
 public class RunCuke {
 }

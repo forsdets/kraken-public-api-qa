@@ -51,7 +51,7 @@ We can run this Regression suite with the following ways.
    change the tag in the gradle file for Cucumber task so that will run the specified scenarios
 
 ```
-gradle clean test
+gradle clean build
 ```
 
 #### Jenkins Build
