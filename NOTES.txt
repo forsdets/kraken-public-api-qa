@@ -1,0 +1,23 @@
+As part of this repository I have achieved the below points:
+
+- This repository is a type of multi-module gradle project
+- Implemented Regression test suite for Kraken public API by using Java WebSocket
+- Completed Happy path for single currency validation for Book, OHLC, Spread, Ticker, Trade
+- Completed Negative paths
+- Schema validation completed for all happy path scenarios and all the public feeds
+- Logging mechanism implemented
+- Test results generated
+- Integrated with a standalone Jenkins job
+- Used all the latest library
+- Test Results has been attached for both Local IDE and Jenkins attached in the mail
+- The dependencies has been handled without any errors between multi-modules
+- Java coding standards and Git standards has been strictly followed in this repository
+
+
+Remarks:
+
+Due to time constraints I couldn't complete the below points:
+
+- Happy path for Multiple Currency validation
+- There are lots of negative scenarios in my mind based on the https://docs.kraken.com/websockets/#errortypes, but I couldn't cover all those
+- Verified this project without Docker implementation is not completed, and possibly I can make it today

@@ -74,3 +74,16 @@ Here slf4j.Logger is helping to make the application logs as well as the cucumbe
 in a fie whatever we are getting in the feed but due to time constraints not it used to tail the logs in the console(
 IDE/Jenkins)
 
+Achievements in this repository
+-------------------------------
+- This repository is a type of multi-module gradle project, The dependencies has been handled without any errors between multi-modules
+- Implemented Regression test suite for Kraken public API by using Java WebSocket
+- Completed Happy path for single currency validation for Book, OHLC, Spread, Ticker, Trade
+- Completed Negative paths
+- Schema validation completed for all happy path scenarios and all the public feeds
+- Logging mechanism implemented
+- Test results generated
+- Integrated with a standalone Jenkins job
+- Used all the latest library
+- Test Results has been attached for both Local IDE and Jenkins attached in the mail
+- Java coding standards and Git standards has been strictly followed in this repository

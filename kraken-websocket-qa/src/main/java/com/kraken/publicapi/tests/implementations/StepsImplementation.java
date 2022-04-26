@@ -30,6 +30,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class StepsImplementation {
     Logger logger = LoggerFactory.getLogger(StepsImplementation.class);
 
+    /*
+    Create connection by calling the WebSocket client
+     */
     public void openWebSocket() throws IOException {
         SocketDataContext context = new SocketDataContext(getPropertyValue(TestConstants.WEB_SOCKET_PROPERTY_FILE_PATH, TestConstants.WEB_SOCKET_API_URI), 60);
         SocketConnection socketConnection = new SocketConnection();
@@ -44,6 +47,9 @@ public class StepsImplementation {
         logger.info(String.format("Client Connection Details --- %s", socketConnection));
     }
 
+    /*
+    Create a subscription request based on the user inputs from the Cucumber scenarios
+     */
     public void createSubscriptionRequest(DataTable dataTable) throws JsonProcessingException {
         List<Map<String, String>> tableRows = dataTable.asMaps(String.class, String.class);
         Map<String, String> inputData = tableRows.get(0);
@@ -77,6 +83,9 @@ public class StepsImplementation {
         logger.info(String.format("Subscription Request --- %s", requestJSONObject));
     }
 
+    /*
+    Submit a subscription request based on the user inputs by calling the client method
+     */
     public void submitRequest() throws InterruptedException {
         SocketConnection socketConnection = (SocketConnection) TestContext.getContext("success_client_connection");
         String jsonString = (String) TestContext.getContext("Subscription_Request");
@@ -86,6 +95,9 @@ public class StepsImplementation {
         TestContext.setContext("success_client_connection", socketConnection);
     }
 
+    /*
+    Validate the subscribed messages from feed based on channel id
+     */
     public void validateSubscription(int delayTime) throws InterruptedException {
         SocketConnection socketConnection = (SocketConnection) TestContext.getContext("success_client_connection");
         int channelId = (int) TestContext.getContext("channel_number");
@@ -113,6 +125,9 @@ public class StepsImplementation {
         logger.info(String.format("Subscribed message size --- %s", subscribedMessageList.size()));
     }
 
+    /*
+    Asserting the subscribed messages from the feed based on the input provided in the gherkin scenarios
+     */
     public void validateSuccessfulSubscription(DataTable table) throws JsonProcessingException {
         List<Map<String, String>> rows = table.asMaps(String.class, String.class);
         Map<String, String> row = rows.get(0);
@@ -147,6 +162,9 @@ public class StepsImplementation {
         TestContext.setContext("channel_number", eventChannelSubscriptionBeans.getChannelID());
     }
 
+    /*
+    Asserting the subscribed unsuccessful subscription messages from the feed based on the input provided in the gherkin scenarios
+     */
     public void validateSuccessfulUnSubscription(DataTable table) throws JsonProcessingException {
         List<Map<String, String>> rows = table.asMaps(String.class, String.class);
         Map<String, String> row = rows.get(0);
@@ -212,6 +230,9 @@ public class StepsImplementation {
         logger.info(String.format("Subscription List size---%s", subscribedMessageList.size()));
     }
 
+    /*
+    Schema validation for all the public feeds
+     */
     public void validateSchema(String schema) {
 
         SocketConnection socketConnection = (SocketConnection) TestContext.getContext("success_client_connection");
